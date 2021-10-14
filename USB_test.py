@@ -4,15 +4,21 @@ import paramiko
 
 class USB_test:
     def __init__(self,logname,hostname,port,username,password):
+        self.logname = logname
+        self.hostname =hostname
+        self.port = port
+        self.username = username
+        self.password = password
 
+    def test_content(self):
         # create SSH item
         ssh = paramiko.SSHClient()
         # permit connect to remote host
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         # connect
-        ssh.connect(hostname=hostname, port=port, username=username, password=password)
+        ssh.connect(hostname=self.hostname, port=self.port, username=self.username, password=self.password)
 
-        with open(logname, 'a+') as f:
+        with open(self.logname, 'a+') as f:
             f.write("\r\rUSB test start \r")
         USB_result='FAIL'
         stdin, stdout, stderr = ssh.exec_command("lsusb -v | grep Mouse | wc -l")
@@ -35,25 +41,26 @@ class USB_test:
         stdin, stdout, stderr = ssh.exec_command("lsusb -v | grep Bulk-Only")
         usb_info = stdout.read()
         usb_info_error = stderr.read()
-        with open(logname, 'a+') as f:
+        with open(self.logname, 'a+') as f:
             f.write("Mouse info is:\r  '%s'\rKeyboard info is:\r  '%s'\rUSB info is:\r  '%s'\r"%(mouse_info,keybaord_info,usb_info))
         if (mouse_num != 6):
-            print('Mouse Test failed, error code is 04003')
-            with open(logname, 'a+') as f:
+            # print('Mouse Test failed, error code is 04003')
+            with open(self.logname, 'a+') as f:
                 f.write("Mouse Test failed, error code is 04003\r")
         elif(keybaord_num != 6):
-            print('Keyboard Test failed, error code is 04002')
-            with open(logname, 'a+') as f:
+            # print('Keyboard Test failed, error code is 04002')
+            with open(self.logname, 'a+') as f:
                 f.write("Keyboard Test failed, error code is 04002\r")
         elif(usb_num != 1):
-            print('USB Test failed, error code is 04001')
-            with open(logname, 'a+') as f:
+            # print('USB Test failed, error code is 04001')
+            with open(self.logname, 'a+') as f:
                 f.write("USB Test failed, error code is 04001\r")
         else:
-            print('USB Test Pass')
+            # print('USB Test Pass')
             USB_result='PASS'
-            with open(logname, 'a+') as f:
+            with open(self.logname, 'a+') as f:
                 f.write("USB Test Pass\r")
 
         # close connect
         ssh.close()
+        return  USB_result

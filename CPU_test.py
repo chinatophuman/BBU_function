@@ -1,16 +1,24 @@
 import paramiko
 
 class CPU_test:
-    def __init__(self,logname,buildoption_type):
+    def __init__(self,logname,buildoption_type,hostname,port,username,password):
+        self.logname = logname
+        self.hostname = hostname
+        self.port = port
+        self.username = username
+        self.password = password
+        self.buildoption_type = buildoption_type
+
+    def test_content(self):
 
         # create SSH item
         ssh = paramiko.SSHClient()
         # permit connect to remote host
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         # connect
-        ssh.connect(hostname='10.168.1.213', port=22, username='root', password='1')
+        ssh.connect(hostname=self.hostname, port=self.port, username=self.username, password=self.password)
 
-        with open(logname, 'a+') as f:
+        with open(self.logname, 'a+') as f:
             f.write("\r\rCPU test start \r")
         CPU_result='FAIL'
         stdin, stdout, stderr = ssh.exec_command("cat /proc/cpuinfo | grep 'model name'")
@@ -22,17 +30,18 @@ class CPU_test:
         cpu_num=int(stdout.read())
         cpu_num_error=stderr.read()
         # print("The CPU core on board is:",cpu_num)
-        with open(logname, 'a+') as f:
+        with open(self.logname, 'a+') as f:
             f.write("CPU info is:\r  '%s'\rCPU number is:\r  '%d'\r"%(cpu_info,cpu_num))
-        if (buildoption_type in cpu_type):
+        if (self.buildoption_type in cpu_type):
             CPU_result='PASS'
-            print('CPU Test Pass')
-            with open(logname, 'a+') as f:
+            # print('CPU Test Pass')
+            with open(self.logname, 'a+') as f:
                 f.write("CPU Test Pass\r")
         else:
-            print('CPU Test Failed, error code is 01001')
-            with open(logname, 'a+') as f:
-                f.write("CPU Test Failed, error code is 01001\r")
+            # print('CPU Test Failed, error code is 01001')
+            with open(self.logname, 'a+') as f:
+                f.write("CPU Test Failed, CPU info check failed error code is 01001\r")
 
         # close connect
         ssh.close()
+        return CPU_result
