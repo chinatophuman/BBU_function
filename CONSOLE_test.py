@@ -1,6 +1,6 @@
 import paramiko
 import time
-import commands
+import subprocess
 import threading
 import ctypes
 import inspect
@@ -26,7 +26,7 @@ class CONSOLE_test:
         with open(self.logname, 'a+') as f:
             f.write("\r\rCONSOLE test start \r")
         CONSOLE_result='FAIL'
-        commands.getoutput('rm -f console.txt')
+        subprocess.run('rm -f console.txt')
 
         def _async_raise(tid, exctype):
             tid = ctypes.c_long(tid)
@@ -52,7 +52,7 @@ class CONSOLE_test:
             def run(self):
                 # with open(self.logname, 'a+') as f:
                 #     f.write('start get console value \r')
-                commands.getoutput('cat /dev/ttyUSB0 > console.txt')
+                subprocess.run('cat /dev/ttyUSB0 > console.txt')
                 # while True:
                 #     print('test')
                 #     time.sleep(0.5)
@@ -64,11 +64,11 @@ class CONSOLE_test:
         t = cat_console_value()
         t.start()
         time.sleep(1)
-        commands.getoutput("echo 'console' > /dev/ttyUSB0")
+        subprocess.run("echo 'console' > /dev/ttyUSB0")
         time.sleep(1)
         stop_thread(t)
 
-        console_value = commands.getoutput('cat console.txt')
+        console_value = subprocess.run('cat console.txt')
 
         with open(self.logname, 'a+') as f:
             f.write("local console get value is %s \r" % (console_value))

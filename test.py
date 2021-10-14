@@ -1,8 +1,6 @@
 import os
-import commands
+import subprocess
 import time
-from tkMessageBox import showinfo
-import easygui as gui
 import re
 import paramiko
 from ETH_test import ETH_test
@@ -36,7 +34,7 @@ SFPPORT4 = 'enp184s0f3'
 # # connect
 # ssh.connect(hostname='10.168.1.198', port=22, username='root', password='111111')
 
-commands.getoutput("rm -f '%s'"%(logname))
+subprocess.run("rm -f '%s'"%(logname))
 
 testitem=['CONSOLE_BBU']
 
